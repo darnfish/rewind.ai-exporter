@@ -58,27 +58,10 @@ chunkNames = chunkNames.sort((a, b) => a.date.getTime() - b.date.getTime())
 // Logging
 let i = 0 
 
-// Copy locally
-for(const chunkName of chunkNames) {
-	const path = `${ROOT_DIR}/chunks/${chunkName.folder}/chunk`
-
-	try {
-		const data = fs.readFileSync(path)
-
-		fs.writeFileSync(`./videos/${chunkName.folder}.mp4`, data)
-	
-		// console.log('OK', `${i}/${chunkNames.length}`, path, '>', chunkName.folder)
-	} catch(error) {
-		// console.error('ERR', `${i}/${chunkNames.length}`, path, '>', chunkName.folder)
-	}
-
-	i += 1
-}
-
 // Write videos
-const videos = chunkNames.map(chunkName => `./videos/${chunkName.folder}.mp4`)
+const videos = chunkNames.map(chunkName => `${ROOT_DIR}/chunks/${chunkName.folder}/chunk`)
 
-fs.writeFileSync('./videos.txt', videos.map(video => `file ${video}`).join('\n'), 'utf8')
+fs.writeFileSync('./videos.txt', videos.map(video => `file '${video}'`).join('\n'), 'utf8')
 
 // Log command
 console.log('ffmpeg -f concat -safe 0 -i videos.txt -c copy out.mp4')
