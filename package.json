@@ -1,0 +1,11 @@
+{
+  "name": "rewind.ai-exporter",
+  "version": "1.0.0",
+  "description": "Export your Rewind.ai history into a single .mp4, locally",
+  "main": "index.js",
+  "repository": "https://github.com/darnfish/rewind.ai-exporter.git",
+  "license": "MIT",
+  "dependencies": {
+    "fluent-ffmpeg": "^2.1.2"
+  }
+}
