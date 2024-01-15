@@ -49,8 +49,6 @@ const chunkDays = chunkMonths.map(({ date: _date, folder }) => {
 	return days
 }).flat()
 
-console.log(chunkDays)
-
 let chunks = chunkDays.map(chunkDay => {
 	return {
 		date: chunkDay.date,
@@ -62,9 +60,6 @@ let chunks = chunkDays.map(chunkDay => {
 chunks = chunks.sort((a, b) => a.date.getTime() - b.date.getTime())
 chunks = chunks.map(chunk => chunk.path)
 chunks = chunks.flat()
-
-// Logging
-let i = 0 
 
 // Write videos
 const videos = chunks.map(chunk => `${ROOT_DIR}/chunks/${chunk}`)
