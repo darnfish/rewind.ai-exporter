@@ -23,43 +23,51 @@ let chunkNames = fs.readdirSync(`${ROOT_DIR}/chunks`)
 chunkNames = chunkNames.filter(chunkName => chunkName !== '.DS_Store')
 
 // Add date object
-chunkNames = chunkNames.map(chunkName => {
-	const [rawDate, rawTime] = chunkName.split('T')
-
-	const date =  new Date(rawDate)
-
-	const [rawHours, rawMins, rawSeconds] = rawTime.split(':')
-
-	date.setHours(rawHours)
-	date.setMinutes(rawMins)
-	date.setSeconds(rawSeconds)
+const chunkMonths = chunkNames.map(chunkName => {
+	const year = chunkName.substring(0, 4)
+	const month = chunkName.substring(4)
 
 	return {
-		date,
+		date: new Date(year, month - 1),
 		folder: chunkName
 	}
 })
 
-// Remove in-progress chunks
-chunkNames = chunkNames.map(chunkName => {
-	const isChunkInProgress = fs.readdirSync(`${ROOT_DIR}/chunks/${chunkName.folder}`).length > 1
+const chunkDays = chunkMonths.map(({ date: _date, folder }) => {
+	const contents = fs.readdirSync(`${ROOT_DIR}/chunks/${folder}`).filter(day => day !== '.DS_Store')
 
+	const days = contents.map(day => {
+		const date = new Date(_date)
+		date.setDate(parseInt(day))
+
+		return {
+			date,
+			folder: [folder, day].join('/')
+		}
+	})
+
+	return days
+}).flat()
+
+console.log(chunkDays)
+
+let chunks = chunkDays.map(chunkDay => {
 	return {
-		...chunkName,
-		isChunkInProgress
+		date: chunkDay.date,
+		path: fs.readdirSync(`${ROOT_DIR}/chunks/${chunkDay.folder}`).map(chunk => [chunkDay.folder, chunk].join('/'))
 	}
-})
-
-chunkNames = chunkNames.filter(chunkName => !chunkName.isChunkInProgress)
+}).flat()
 
 // Sort properly based on date
-chunkNames = chunkNames.sort((a, b) => a.date.getTime() - b.date.getTime())
+chunks = chunks.sort((a, b) => a.date.getTime() - b.date.getTime())
+chunks = chunks.map(chunk => chunk.path)
+chunks = chunks.flat()
 
 // Logging
 let i = 0 
 
 // Write videos
-const videos = chunkNames.map(chunkName => `${ROOT_DIR}/chunks/${chunkName.folder}/chunk`)
+const videos = chunks.map(chunk => `${ROOT_DIR}/chunks/${chunk}`)
 
 fs.writeFileSync('./videos.txt', videos.map(video => `file '${video}'`).join('\n'), 'utf8')
 
