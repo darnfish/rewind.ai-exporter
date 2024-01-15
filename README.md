@@ -15,5 +15,11 @@ yarn
 node . | sh
 ```
 
+You can run `estimate.js` to view an estimated size of the mp4 output. For example:
+```
+$ node estimate.js
+Estimated size: 129.68 GiB
+```
+
 ## License
 MIT
